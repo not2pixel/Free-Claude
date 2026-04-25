@@ -583,13 +583,6 @@ function populateModelDropdown() {
         ${tagsHtml}
       `;
       
-      opt.addEventListener('click', () => {
-        selectModel(provider.id, model.id, model.name);
-        dom.modelOpts.forEach((o) => o.classList.remove('active'));
-        opt.classList.add('active');
-        closeDropdown();
-      });
-      
       container.appendChild(opt);
     });
   });
@@ -597,11 +590,86 @@ function populateModelDropdown() {
   // Update model option references
   dom.modelOpts = document.querySelectorAll('.model-opt');
   
+  // Bind event listeners to all model options
+  bindModelOptionListeners();
+  
   // Set initial active state
   const initialOpt = document.querySelector(
     `.model-opt[data-provider="${state.provider}"][data-model="${state.model}"]`
   );
   if (initialOpt) initialOpt.classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════════
+// BIND MODEL OPTION LISTENERS
+// ═══════════════════════════════════════════════════════════
+function bindModelOptionListeners() {
+  dom.modelOpts.forEach((opt) => {
+    opt.addEventListener('click', () => {
+      const prov = opt.dataset.provider;
+      const model = opt.dataset.model;
+      const name = opt.dataset.name;
+
+      // Switch provider if needed
+      if (prov !== state.provider) {
+        state.provider = prov;
+        dom.providerTabs.forEach((t) => {
+          t.classList.toggle('active', t.dataset.provider === prov);
+        });
+        dom.groqModels.classList.toggle('hidden', prov !== 'groq');
+        dom.orModels.classList.toggle('hidden', prov !== 'openrouter');
+      }
+
+      selectModel(prov, model, name);
+      dom.modelOpts.forEach((o) => o.classList.remove('active'));
+      opt.classList.add('active');
+      closeDropdown();
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// SELECT MODEL (helper)
+// ═══════════════════════════════════════════════════════════
+function selectModel(prov, model, name) {
+  state.provider = prov;
+  state.model = model;
+  state.modelName = name;
+  updateModelDisplay();
+}
+
+// ═══════════════════════════════════════════════════════════
+// BIND PROVIDER TAB LISTENERS
+// ═══════════════════════════════════════════════════════════
+function bindProviderTabListeners() {
+  dom.providerTabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const prov = tab.dataset.provider;
+      state.provider = prov;
+
+      // Update tab styles
+      dom.providerTabs.forEach((t) => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      // Show/hide model lists
+      dom.groqModels.classList.toggle('hidden', prov !== 'groq');
+      dom.orModels.classList.toggle('hidden', prov !== 'openrouter');
+
+      // Select first model of provider
+      const provider = getProviderConfig(prov);
+      const defaultModelId = provider.default;
+      const defaultModel = provider.models.find(m => m.id === defaultModelId);
+      
+      selectModel(prov, defaultModelId, defaultModel.name);
+      
+      dom.modelOpts.forEach((o) => o.classList.remove('active'));
+      document.querySelector(
+        `.model-opt[data-provider="${prov}"][data-model="${defaultModelId}"]`
+      )?.classList.add('active');
+      
+      updateModelDisplay();
+    });
+  });
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -668,35 +736,8 @@ function init() {
     }
   });
 
-  // Provider tabs — updated to use modelsData
-  dom.providerTabs.forEach((tab) => {
-    tab.addEventListener('click', () => {
-      const prov = tab.dataset.provider;
-      state.provider = prov;
-
-      // Update tab styles
-      dom.providerTabs.forEach((t) => t.classList.remove('active'));
-      tab.classList.add('active');
-
-      // Show/hide model lists
-      dom.groqModels.classList.toggle('hidden', prov !== 'groq');
-      dom.orModels.classList.toggle('hidden', prov !== 'openrouter');
-
-      // Select first model of provider
-      const provider = getProviderConfig(prov);
-      const defaultModelId = provider.default;
-      const defaultModel = provider.models.find(m => m.id === defaultModelId);
-      
-      selectModel(prov, defaultModelId, defaultModel.name);
-      
-      dom.modelOpts.forEach((o) => o.classList.remove('active'));
-      document.querySelector(
-        `.model-opt[data-provider="${prov}"][data-model="${defaultModelId}"]`
-      )?.classList.add('active');
-      
-      updateModelDisplay();
-    });
-  });
+  // Provider tabs binding (called here and after DOM updates)
+  bindProviderTabListeners();
 
   // Mobile sidebar
   dom.sidebarToggle.addEventListener('click', () => {
@@ -708,14 +749,6 @@ function init() {
   function closeMobileSidebar() {
     dom.sidebar.classList.remove('open');
     dom.sidebarOverlay.classList.remove('visible');
-  }
-
-  // Helper function
-  function selectModel(prov, model, name) {
-    state.provider = prov;
-    state.model = model;
-    state.modelName = name;
-    updateModelDisplay();
   }
 
   // Initial render
