@@ -1,0 +1,66 @@
+{
+  "_comment": "Edit this file to add/remove/reorder models. No code changes needed.",
+  "_schema": {
+    "providers": "array of provider objects",
+    "provider.id": "used as the API 'provider' param — must be 'groq' or 'openrouter'",
+    "provider.label": "display name shown in the UI",
+    "provider.description": "short subtitle shown in dropdown",
+    "provider.color": "hex color for the badge background",
+    "provider.default": "model id to select on first load",
+    "model.id": "exact model string sent to the API",
+    "model.name": "display name in dropdown",
+    "model.ctx": "context window label e.g. '128k'",
+    "model.tags": "optional array: 'fast' | 'vision' | 'code' | 'reasoning' | 'long'"
+  },
+  "providers": [
+    {
+      "id": "groq",
+      "label": "Groq",
+      "description": "Ultra-fast inference",
+      "color": "#c96442",
+      "default": "llama-3.3-70b-versatile",
+      "models": [
+        { "id": "llama-3.3-70b-versatile",                    "name": "Llama 3.3 70B Versatile AAAA",    "ctx": "128k", "tags": ["fast"] },
+        { "id": "llama-3.1-8b-instant",                       "name": "Llama 3.1 8B Instant",       "ctx": "128k", "tags": ["fast"] },
+        { "id": "llama-3.2-90b-vision-preview",               "name": "Llama 3.2 90B Vision",       "ctx": "8k",   "tags": ["vision"] },
+        { "id": "llama-3.2-11b-vision-preview",               "name": "Llama 3.2 11B Vision",       "ctx": "8k",   "tags": ["vision"] },
+        { "id": "llama-3.2-3b-preview",                       "name": "Llama 3.2 3B Preview",       "ctx": "8k",   "tags": ["fast"] },
+        { "id": "llama-3.2-1b-preview",                       "name": "Llama 3.2 1B Preview",       "ctx": "8k",   "tags": ["fast"] },
+        { "id": "mixtral-8x7b-32768",                         "name": "Mixtral 8x7B MoE",           "ctx": "32k",  "tags": [] },
+        { "id": "gemma2-9b-it",                               "name": "Gemma 2 9B IT",              "ctx": "8k",   "tags": [] },
+        { "id": "gemma-7b-it",                                "name": "Gemma 7B IT",                "ctx": "8k",   "tags": [] },
+        { "id": "llama3-groq-70b-8192-tool-use-preview",      "name": "Llama 3 70B Tool Use",       "ctx": "8k",   "tags": ["code"] },
+        { "id": "llama3-groq-8b-8192-tool-use-preview",       "name": "Llama 3 8B Tool Use",        "ctx": "8k",   "tags": ["code"] },
+        { "id": "deepseek-r1-distill-llama-70b",              "name": "DeepSeek R1 Distill 70B",    "ctx": "128k", "tags": ["reasoning"] },
+        { "id": "deepseek-r1-distill-qwen-32b",               "name": "DeepSeek R1 Distill 32B",    "ctx": "128k", "tags": ["reasoning"] }
+      ]
+    },
+    {
+      "id": "openrouter",
+      "label": "OpenRouter",
+      "description": "Multi-provider hub",
+      "color": "#5e5d59",
+      "default": "openai/gpt-4o",
+      "models": [
+        { "id": "openai/gpt-4o",                              "name": "GPT-4o",                     "ctx": "128k", "tags": ["vision"] },
+        { "id": "openai/gpt-4o-mini",                         "name": "GPT-4o Mini",                "ctx": "128k", "tags": ["fast"] },
+        { "id": "openai/o1-preview",                          "name": "OpenAI o1 Preview",          "ctx": "128k", "tags": ["reasoning"] },
+        { "id": "openai/o1-mini",                             "name": "OpenAI o1 Mini",             "ctx": "128k", "tags": ["reasoning", "fast"] },
+        { "id": "anthropic/claude-opus-4",                    "name": "Claude Opus 4",              "ctx": "200k", "tags": ["reasoning"] },
+        { "id": "anthropic/claude-sonnet-4-5",                "name": "Claude Sonnet 4.5",          "ctx": "200k", "tags": [] },
+        { "id": "anthropic/claude-3-haiku",                   "name": "Claude 3 Haiku",             "ctx": "200k", "tags": ["fast"] },
+        { "id": "google/gemini-pro-1.5",                      "name": "Gemini Pro 1.5",             "ctx": "1M",   "tags": ["long", "vision"] },
+        { "id": "google/gemini-flash-1.5",                    "name": "Gemini Flash 1.5",           "ctx": "1M",   "tags": ["fast", "long"] },
+        { "id": "google/gemini-flash-2.0",                    "name": "Gemini Flash 2.0",           "ctx": "1M",   "tags": ["fast", "long"] },
+        { "id": "meta-llama/llama-3.1-405b-instruct",         "name": "Llama 3.1 405B",             "ctx": "131k", "tags": [] },
+        { "id": "meta-llama/llama-3.1-70b-instruct",          "name": "Llama 3.1 70B",              "ctx": "131k", "tags": [] },
+        { "id": "mistralai/mistral-large",                    "name": "Mistral Large",              "ctx": "32k",  "tags": [] },
+        { "id": "mistralai/mixtral-8x22b-instruct",           "name": "Mixtral 8x22B",              "ctx": "65k",  "tags": [] },
+        { "id": "cohere/command-r-plus",                      "name": "Command R+",                 "ctx": "128k", "tags": [] },
+        { "id": "deepseek/deepseek-r1",                       "name": "DeepSeek R1",                "ctx": "64k",  "tags": ["reasoning"] },
+        { "id": "x-ai/grok-2",                               "name": "xAI Grok 2",                 "ctx": "131k", "tags": [] },
+        { "id": "x-ai/grok-3-mini-beta",                     "name": "xAI Grok 3 Mini",            "ctx": "131k", "tags": ["fast", "reasoning"] }
+      ]
+    }
+  ]
+}
