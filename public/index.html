@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpenClaude — AI Chat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Source+Sans+3:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════ SIDEBAR ════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <svg width="32" height="32" viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="24" r="20" fill="#c96442" opacity="0.12"/>
+        <path d="M17 33L24 14L31 33" stroke="#c96442" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M19.5 27H28.5" stroke="#c96442" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <span class="logo-text">OpenClaude</span>
+    </div>
+    <button class="icon-btn" id="newChatBtn" title="New conversation" aria-label="New conversation">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="sidebar-conversations">
+    <p class="sidebar-section-label">Conversations</p>
+    <div class="conv-list" id="convList">
+      <p class="empty-hint" id="emptyHint">No conversations yet.<br>Start one below.</p>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <a href="https://console.groq.com/keys" target="_blank" class="footer-link">Groq Key</a>
+    <span class="footer-dot">·</span>
+    <a href="https://openrouter.ai/keys" target="_blank" class="footer-link">OpenRouter Key</a>
+    <span class="footer-dot">·</span>
+    <button class="footer-link" id="settingsToggle">Settings</button>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════ MAIN ══════════════════════════════════ -->
+<main class="main">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <button class="icon-btn mobile-menu-btn" id="sidebarToggle" aria-label="Toggle sidebar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    <!-- Model selector -->
+    <div class="model-selector" id="modelSelector">
+      <button class="model-btn" id="modelBtn" aria-haspopup="true" aria-expanded="false">
+        <span class="provider-badge" id="providerBadge">⚡ Groq</span>
+        <span class="model-label" id="modelLabel">Llama 3.3 70B</span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" class="chevron">
+          <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="model-dropdown" id="modelDropdown" role="menu" aria-hidden="true">
+        <!-- Groq section -->
+        <div class="dropdown-provider-header">
+          <button class="provider-tab active" data-provider="groq">⚡ Groq <span class="provider-desc">Ultra-fast inference</span></button>
+        </div>
+        <div class="dropdown-models" id="groqModels">
+          <button class="model-opt active" data-provider="groq" data-model="llama-3.3-70b-versatile" data-name="Llama 3.3 70B Versatile">Llama 3.3 70B Versatile <span class="ctx">128k</span></button>
+          <button class="model-opt" data-provider="groq" data-model="llama-3.1-8b-instant" data-name="Llama 3.1 8B Instant">Llama 3.1 8B Instant <span class="ctx">128k</span></button>
+          <button class="model-opt" data-provider="groq" data-model="llama-3.2-90b-vision-preview" data-name="Llama 3.2 90B Vision">Llama 3.2 90B Vision <span class="ctx">8k</span></button>
+          <button class="model-opt" data-provider="groq" data-model="llama-3.2-11b-vision-preview" data-name="Llama 3.2 11B Vision">Llama 3.2 11B Vision <span class="ctx">8k</span></button>
+          <button class="model-opt" data-provider="groq" data-model="llama-3.2-3b-preview" data-name="Llama 3.2 3B">Llama 3.2 3B Preview <span class="ctx">8k</span></button>
+          <button class="model-opt" data-provider="groq" data-model="mixtral-8x7b-32768" data-name="Mixtral 8x7B">Mixtral 8x7B MoE <span class="ctx">32k</span></button>
+          <button class="model-opt" data-provider="groq" data-model="gemma2-9b-it" data-name="Gemma 2 9B">Gemma 2 9B IT <span class="ctx">8k</span></button>
+          <button class="model-opt" data-provider="groq" data-model="gemma-7b-it" data-name="Gemma 7B">Gemma 7B IT <span class="ctx">8k</span></button>
+          <button class="model-opt" data-provider="groq" data-model="llama3-groq-70b-8192-tool-use-preview" data-name="Llama 3 70B Tool Use">Llama 3 70B Tool Use <span class="ctx">8k</span></button>
+          <button class="model-opt" data-provider="groq" data-model="llama3-groq-8b-8192-tool-use-preview" data-name="Llama 3 8B Tool Use">Llama 3 8B Tool Use <span class="ctx">8k</span></button>
+          <button class="model-opt" data-provider="groq" data-model="deepseek-r1-distill-llama-70b" data-name="DeepSeek R1 Distill 70B">DeepSeek R1 Distill 70B <span class="ctx">128k</span></button>
+        </div>
+
+        <div class="dropdown-divider"></div>
+
+        <!-- OpenRouter section -->
+        <div class="dropdown-provider-header">
+          <button class="provider-tab" data-provider="openrouter">🌐 OpenRouter <span class="provider-desc">Multi-provider hub</span></button>
+        </div>
+        <div class="dropdown-models hidden" id="openrouterModels">
+          <button class="model-opt" data-provider="openrouter" data-model="openai/gpt-4o" data-name="GPT-4o">GPT-4o <span class="ctx">128k</span></button>
+          <button class="model-opt" data-provider="openrouter" data-model="openai/gpt-4o-mini" data-name="GPT-4o Mini">GPT-4o Mini <span class="ctx">128k</span></button>
+          <button class="model-opt" data-provider="openrouter" data-model="openai/o1-mini" data-name="o1 Mini">OpenAI o1 Mini <span class="ctx">128k</span></button>
+          <button class="model-opt" data-provider="openrouter" data-model="anthropic/claude-3.5-sonnet" data-name="Claude 3.5 Sonnet">Claude 3.5 Sonnet <span class="ctx">200k</span></button>
+          <button class="model-opt" data-provider="openrouter" data-model="anthropic/claude-3-haiku" data-name="Claude 3 Haiku">Claude 3 Haiku <span class="ctx">200k</span></button>
+          <button class="model-opt" data-provider="openrouter" data-model="google/gemini-pro-1.5" data-name="Gemini Pro 1.5">Gemini Pro 1.5 <span class="ctx">1M</span></button>
+          <button class="model-opt" data-provider="openrouter" data-model="google/gemini-flash-1.5" data-name="Gemini Flash 1.5">Gemini Flash 1.5 <span class="ctx">1M</span></button>
+          <button class="model-opt" data-provider="openrouter" data-model="meta-llama/llama-3.1-405b-instruct" data-name="Llama 3.1 405B">Llama 3.1 405B Instruct <span class="ctx">131k</span></button>
+          <button class="model-opt" data-provider="openrouter" data-model="meta-llama/llama-3.1-70b-instruct" data-name="Llama 3.1 70B">Llama 3.1 70B Instruct <span class="ctx">131k</span></button>
+          <button class="model-opt" data-provider="openrouter" data-model="mistralai/mistral-large" data-name="Mistral Large">Mistral Large <span class="ctx">32k</span></button>
+          <button class="model-opt" data-provider="openrouter" data-model="mistralai/mixtral-8x22b-instruct" data-name="Mixtral 8x22B">Mixtral 8x22B Instruct <span class="ctx">65k</span></button>
+          <button class="model-opt" data-provider="openrouter" data-model="cohere/command-r-plus" data-name="Command R+">Cohere Command R+ <span class="ctx">128k</span></button>
+          <button class="model-opt" data-provider="openrouter" data-model="deepseek/deepseek-r1" data-name="DeepSeek R1">DeepSeek R1 <span class="ctx">64k</span></button>
+          <button class="model-opt" data-provider="openrouter" data-model="x-ai/grok-2" data-name="Grok 2">xAI Grok 2 <span class="ctx">131k</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <button class="icon-btn" id="clearBtn" title="Clear chat" aria-label="Clear chat">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Settings panel -->
+  <div class="settings-panel hidden" id="settingsPanel">
+    <div class="settings-inner">
+      <div class="settings-field">
+        <label class="settings-label" for="systemPromptInput">System Prompt</label>
+        <textarea class="settings-textarea" id="systemPromptInput" rows="3" placeholder="You are a helpful assistant...">You are a helpful, harmless, and honest AI assistant. Be concise but thorough.</textarea>
+      </div>
+      <div class="settings-field">
+        <label class="settings-label" for="tempInput">Temperature <span id="tempValue">0.7</span></label>
+        <input type="range" id="tempInput" min="0" max="2" step="0.1" value="0.7" class="range-input" />
+      </div>
+      <div class="settings-field">
+        <label class="settings-label" for="maxTokensInput">Max Tokens</label>
+        <input type="number" id="maxTokensInput" value="4096" min="256" max="32768" step="256" class="settings-number" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div class="messages" id="messages">
+    <!-- Welcome screen -->
+    <div class="welcome" id="welcome">
+      <div class="welcome-logo">
+        <svg width="56" height="56" viewBox="0 0 48 48" fill="none">
+          <circle cx="24" cy="24" r="20" fill="#c96442" opacity="0.10"/>
+          <path d="M17 33L24 14L31 33" stroke="#c96442" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M19.5 27H28.5" stroke="#c96442" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h1 class="welcome-title">OpenClaude</h1>
+      <p class="welcome-sub">A beautiful AI chat interface powered by Groq &amp; OpenRouter.<br>Select a model above and start a conversation.</p>
+      <div class="welcome-chips">
+        <button class="chip" data-prompt="Explain how transformers work in neural networks">Explain transformers in AI</button>
+        <button class="chip" data-prompt="Write a Python function to parse JSON from an API response with error handling">Write Python API parser</button>
+        <button class="chip" data-prompt="What are the key differences between TCP and UDP?">TCP vs UDP differences</button>
+        <button class="chip" data-prompt="Summarize the key ideas of Clean Code by Robert Martin">Summarize Clean Code</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error banner -->
+  <div class="error-banner hidden" id="errorBanner">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+      <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span id="errorText"></span>
+    <button class="error-close" id="errorClose">×</button>
+  </div>
+
+  <!-- Input area -->
+  <div class="input-area">
+    <div class="input-box">
+      <textarea
+        class="input-textarea"
+        id="messageInput"
+        placeholder="Message OpenClaude…"
+        rows="1"
+        aria-label="Message input"
+      ></textarea>
+      <button class="send-btn" id="sendBtn" aria-label="Send message" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M22 2L11 13M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+    <p class="input-hint">OpenClaude can make mistakes. Verify important information.</p>
+  </div>
+</main>
+
+<!-- Sidebar overlay for mobile -->
+<div class="sidebar-overlay hidden" id="sidebarOverlay"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
